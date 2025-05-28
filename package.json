@@ -12,6 +12,7 @@
     "test:ci": "jest --ci --coverage"
   },
   "dependencies": {
+    "@geist-ui/core": "^2.3.8",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18"
