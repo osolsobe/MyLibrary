@@ -16,4 +16,5 @@ export interface Book {
   category: Category;
   isRead: boolean;
   addedAt: string;
+  completedAt?: string;
 } 
