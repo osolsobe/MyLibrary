@@ -1,0 +1,19 @@
+{
+  "books": [
+    {
+      "title": "Jít nalehko...",
+      "author": "Nanao Hakari",
+      "id": "umranqxy4",
+      "addedAt": "2025-05-28T13:58:25.065Z",
+      "isRead": false,
+      "category": "Personal Development and Motivation"
+    },
+    {
+      "title": "The Hobbit",
+      "author": "J. R. R. Tolkien",
+      "category": "Sci-fi, Fantasy and Horror",
+      "id": "o89epsm1t",
+      "addedAt": "2025-05-28T14:01:00.631Z"
+    }
+  ]
+}
