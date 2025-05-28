@@ -18,7 +18,7 @@ export async function GET() {
   try {
     const data = await readBooks();
     return NextResponse.json(data.books);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch books' }, { status: 500 });
   }
 }
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     await writeBooks(data);
     
     return NextResponse.json(newBook);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to add book' }, { status: 500 });
   }
 }
@@ -57,7 +57,7 @@ export async function PUT(request: Request) {
     await writeBooks(data);
     
     return NextResponse.json(data.books[bookIndex]);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update book' }, { status: 500 });
   }
 } 

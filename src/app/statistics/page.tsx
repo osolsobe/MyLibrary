@@ -5,7 +5,6 @@ import { Book, Category } from '@/types/book';
 import Link from 'next/link';
 
 export default function Statistics() {
-  const [books, setBooks] = useState<Book[]>([]);
   const [stats, setStats] = useState({
     totalBooks: 0,
     readBooks: 0,
@@ -15,15 +14,14 @@ export default function Statistics() {
   });
 
   useEffect(() => {
+    const fetchBooks = async () => {
+      const response = await fetch('/api/books');
+      const data = await response.json();
+      calculateStats(data);
+    };
+
     fetchBooks();
   }, []);
-
-  const fetchBooks = async () => {
-    const response = await fetch('/api/books');
-    const data = await response.json();
-    setBooks(data);
-    calculateStats(data);
-  };
 
   const calculateStats = (books: Book[]) => {
     // Basic counts

@@ -5,18 +5,6 @@ import { Book, Category } from '@/types/book';
 import AddBookModal from '@/components/AddBookModal';
 import Link from 'next/link';
 
-const categories: Category[] = [
-  'Novels and Fiction',
-  'Sci-fi, Fantasy and Horror',
-  'Crime and Thrillers',
-  'Romance and Relationships',
-  'Non-Fiction / Educational',
-  'Personal Development and Motivation',
-  'Biographies and Travel',
-  'Children\'s and Young Adult Books',
-  'Art, Culture and Hobbies'
-];
-
 export default function Home() {
   const [books, setBooks] = useState<Book[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
