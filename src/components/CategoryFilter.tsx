@@ -1,12 +1,6 @@
 import { Category } from '@/types/book';
 
-interface CategoryFilterProps {
-  selectedCategory: Category | 'All';
-  onCategoryChange: (category: Category | 'All') => void;
-}
-
-const categories: (Category | 'All')[] = [
-  'All',
+const categories: Category[] = [
   'Novels and Fiction',
   'Sci-fi, Fantasy and Horror',
   'Crime and Thrillers',
@@ -18,23 +12,31 @@ const categories: (Category | 'All')[] = [
   'Art, Culture and Hobbies'
 ];
 
+interface CategoryFilterProps {
+  selectedCategory: Category | 'All';
+  onCategoryChange: (category: Category | 'All') => void;
+}
+
 export default function CategoryFilter({ selectedCategory, onCategoryChange }: CategoryFilterProps) {
   return (
-    <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Filter by Category
-      </label>
+    <div className="relative">
       <select
         value={selectedCategory}
         onChange={(e) => onCategoryChange(e.target.value as Category | 'All')}
-        className="w-full md:w-64 border p-2 rounded bg-white"
+        className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white shadow-sm hover:border-gray-400 transition-colors duration-150 appearance-none"
       >
+        <option value="All">All Categories</option>
         {categories.map((category) => (
           <option key={category} value={category}>
             {category}
           </option>
         ))}
       </select>
+      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
     </div>
   );
 } 
