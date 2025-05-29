@@ -1,15 +1,24 @@
 import { NextResponse } from 'next/server';
-import { db, books, dbBookToAppBook } from '@/lib/db';
+import { db, books, dbBookToAppBook, initDatabase } from '@/lib/db';
 import { eq } from 'drizzle-orm';
 import { Book } from '@/types/book';
 
+// Initialize database on first request
+let isInitialized = false;
+async function ensureInitialized() {
+  if (!isInitialized) {
+    await initDatabase();
+    isInitialized = true;
+  }
+}
+
 export async function GET() {
   try {
+    await ensureInitialized();
     const dbBooks = await db.select().from(books);
-    const appBooks = dbBooks.map(dbBookToAppBook);
-    return NextResponse.json(appBooks);
+    return NextResponse.json(dbBooks.map(dbBookToAppBook));
   } catch (error) {
-    console.error('Failed to fetch books:', error);
+    console.error('Error fetching books:', error);
     return NextResponse.json({ error: 'Failed to fetch books' }, { status: 500 });
   }
 }
