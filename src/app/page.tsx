@@ -21,9 +21,18 @@ export default function Home() {
   }, []);
 
   const fetchBooks = async () => {
-    const response = await fetch('/api/books');
-    const data = await response.json();
-    setBooks(data);
+    try {
+      const response = await fetch('/api/books');
+      const data = await response.json();
+      console.log('Main page received data from API:', data);
+      if (!Array.isArray(data)) {
+        console.error('Main page: Data is not an array:', data);
+        return;
+      }
+      setBooks(data);
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
   };
 
   const handleAddBook = async (book: { title: string; author: string; category: Category }) => {

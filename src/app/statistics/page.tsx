@@ -16,9 +16,18 @@ export default function Statistics() {
 
   useEffect(() => {
     const fetchBooks = async () => {
-      const response = await fetch('/api/books');
-      const data = await response.json();
-      calculateStats(data);
+      try {
+        const response = await fetch('/api/books');
+        const data = await response.json();
+        console.log('Received data from API:', data);
+        if (!Array.isArray(data)) {
+          console.error('Data is not an array:', data);
+          return;
+        }
+        calculateStats(data);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
     };
 
     fetchBooks();

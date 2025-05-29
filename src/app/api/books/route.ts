@@ -5,20 +5,33 @@ import { Book } from '@/types/book';
 
 const dataFilePath = path.join(process.cwd(), 'src/data/books.json');
 
-async function readBooks(): Promise<{ books: Book[] }> {
-  const fileContents = await fs.readFile(dataFilePath, 'utf8');
-  return JSON.parse(fileContents);
+async function readBooks(): Promise<Book[]> {
+  try {
+    const fileContents = await fs.readFile(dataFilePath, 'utf8');
+    const data = JSON.parse(fileContents);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    // If file doesn't exist or is invalid, return empty array
+    console.error('Error reading books:', error);
+    return [];
+  }
 }
 
-async function writeBooks(data: { books: Book[] }) {
-  await fs.writeFile(dataFilePath, JSON.stringify(data, null, 2));
+async function writeBooks(books: Book[]) {
+  try {
+    await fs.writeFile(dataFilePath, JSON.stringify(books, null, 2));
+  } catch (error) {
+    console.error('Error writing books:', error);
+    throw error;
+  }
 }
 
 export async function GET() {
   try {
-    const data = await readBooks();
-    return NextResponse.json(data.books);
-  } catch {
+    const books = await readBooks();
+    return NextResponse.json(books);
+  } catch (error) {
+    console.error('Failed to fetch books:', error);
     return NextResponse.json({ error: 'Failed to fetch books' }, { status: 500 });
   }
 }
@@ -26,7 +39,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const book: Omit<Book, 'id' | 'addedAt'> = await request.json();
-    const data = await readBooks();
+    const books = await readBooks();
     
     const newBook: Book = {
       ...book,
@@ -34,11 +47,12 @@ export async function POST(request: Request) {
       addedAt: new Date().toISOString(),
     };
     
-    data.books.push(newBook);
-    await writeBooks(data);
+    books.push(newBook);
+    await writeBooks(books);
     
     return NextResponse.json(newBook);
-  } catch {
+  } catch (error) {
+    console.error('Failed to add book:', error);
     return NextResponse.json({ error: 'Failed to add book' }, { status: 500 });
   }
 }
@@ -46,24 +60,25 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const { id, isRead, completedAt } = await request.json();
-    const data = await readBooks();
+    const books = await readBooks();
     
-    const bookIndex = data.books.findIndex(book => book.id === id);
+    const bookIndex = books.findIndex(book => book.id === id);
     if (bookIndex === -1) {
       return NextResponse.json({ error: 'Book not found' }, { status: 404 });
     }
     
-    data.books[bookIndex].isRead = isRead;
+    books[bookIndex].isRead = isRead;
     if (isRead && completedAt) {
-      data.books[bookIndex].completedAt = completedAt;
+      books[bookIndex].completedAt = completedAt;
     } else if (!isRead) {
-      delete data.books[bookIndex].completedAt;
+      delete books[bookIndex].completedAt;
     }
     
-    await writeBooks(data);
+    await writeBooks(books);
     
-    return NextResponse.json(data.books[bookIndex]);
-  } catch {
+    return NextResponse.json(books[bookIndex]);
+  } catch (error) {
+    console.error('Failed to update book:', error);
     return NextResponse.json({ error: 'Failed to update book' }, { status: 500 });
   }
 }
@@ -71,24 +86,25 @@ export async function PUT(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const { id, title, author, category } = await request.json();
-    const data = await readBooks();
+    const books = await readBooks();
     
-    const bookIndex = data.books.findIndex(book => book.id === id);
+    const bookIndex = books.findIndex(book => book.id === id);
     if (bookIndex === -1) {
       return NextResponse.json({ error: 'Book not found' }, { status: 404 });
     }
     
-    data.books[bookIndex] = {
-      ...data.books[bookIndex],
+    books[bookIndex] = {
+      ...books[bookIndex],
       title,
       author,
       category,
     };
     
-    await writeBooks(data);
+    await writeBooks(books);
     
-    return NextResponse.json(data.books[bookIndex]);
-  } catch {
+    return NextResponse.json(books[bookIndex]);
+  } catch (error) {
+    console.error('Failed to update book:', error);
     return NextResponse.json({ error: 'Failed to update book' }, { status: 500 });
   }
 }
@@ -96,18 +112,19 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
-    const data = await readBooks();
+    const books = await readBooks();
     
-    const bookIndex = data.books.findIndex(book => book.id === id);
+    const bookIndex = books.findIndex(book => book.id === id);
     if (bookIndex === -1) {
       return NextResponse.json({ error: 'Book not found' }, { status: 404 });
     }
     
-    data.books.splice(bookIndex, 1);
-    await writeBooks(data);
+    books.splice(bookIndex, 1);
+    await writeBooks(books);
     
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error('Failed to delete book:', error);
     return NextResponse.json({ error: 'Failed to delete book' }, { status: 500 });
   }
 } 
